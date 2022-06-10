@@ -1,0 +1,42 @@
+using MySql.Data.MySqlClient;
+using MySql.Data;
+
+//Botón inicio fabricación
+private void Inicio_fabricacion_Click(object sender, RoutedEventArgs e)
+{
+parametros.Inicio_fabricacion = true;
+parametros.numero_palets = textBox_Unidades.Text;
+parametros.lote = textBox_Lote.Text;
+parametros.primer_palet = textBox_Primero.Text;
+parametros.caducidad = textBox_Fecha.Text;
+ComboBoxItem item = (ComboBoxItem)comboPalet.SelectedItem;
+parametros.tipo_palet = (string)item.Content;
+parametros.Calidad = true;
+parametros.Fabricacion_en_marcha = true;
+
+//Guardado de datos en base de datos
+string cadenaConexion="server=localhost;user=root;database=DatosLotes;port=3306; password=marcosende;";
+
+MySqlConnection conexion = new MySqlConnection(cadenaConexion);
+conexion.Open();
+
+MySqlCommand orden = new MySqlCommand("INSERT INTO Lotes (NumeroPalet, PrimerPalet, TipoPalet, Caducidad, Inicio, Fin, Calidad) VALUES " + "('" + parametros.numero_palets + "', '" + parametros.primer_palet + "', '" + parametros.tipo_palet + "', '" + parametros.caducidad + "','" + DateTime.Now + "','','" + Convert.ToInt16(parametros.Calidad) + "')", conexion);
+
+orden.ExecuteNonQuery();
+conexion.Close();
+}
+
+void EnvioRegistros() {
+if (parametros.Fabricacion_en_marcha) {
+string cadenaConexion ="server=localhost;user=root;database=DatosLotes;port=3306; password=marcosende";
+
+MySqlConnection conexion = new MySqlConnection(cadenaConexion);
+conexion.Open();
+
+MySqlCommand orden = new MySqlCommand("INSERT INTO RegistroFabricacion (TempEntrada, CaudalEnt, Temp100k, Capacidad100k, CaudalBomba3, Temp50k, Capacidad50k, CaudalAgua, BombaAguaFria, EstadoAgitador, CaudalFabricacion, CapacidadCuajo, NivelLechebajo, NivelCuajoBajo) VALUES " +
+"('" + parametros.Temp_ent + "', '" + parametros.Caudal_ent + "', '" + parametros.Temp_100k + "', '" + parametros.Capacidad_100k + "','" + parametros.Caudal_Bomba3 + "','"+parametros.Temp_50k+"','"+parametros.Capacidad_50k+"','"+parametros.Caudal_agua+ "','" + Convert.ToInt16(parametros.BombaAguaFria) + "','" + Convert.ToInt16(parametros.Estado_agitador) + "','" + parametros.Caudal_fabricacion + "','" + parametros.Capacidad_cuajo + "','" + Convert.ToInt16(parametros.Nivel_leche_bajo) + "','" + Convert.ToInt16(parametros.Nivel_cuajo_bajo) + "')", conexion);
+
+orden.ExecuteNonQuery();
+conexion.Close();
+}
+}
